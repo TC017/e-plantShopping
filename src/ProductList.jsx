@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "./ProductList.css";
 import CartItem from "./CartItem";
 import { addItem } from "./CartSlice";
@@ -7,8 +7,9 @@ import { addItem } from "./CartSlice";
 function ProductList() {
   const [showCart, setShowCart] = useState(false);
   const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
-  const [addedToCart, setaddedToCart] = useState({});
   const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items);
+  const numItems = useSelector((state) => state.cart.numOfItems);
 
   const plantsArray = [
     {
@@ -290,10 +291,6 @@ function ProductList() {
 
   const handleAddToCart = (product) => {
     dispatch(addItem(product));
-    setaddedToCart((prevState) => ({
-      ...prevState,
-      [product.name]: true, // Set the product name as key and value as true to indicate it's added to cart
-    }));
   };
 
   return (
@@ -338,12 +335,13 @@ function ProductList() {
                     d="M42.3,72H221.7l-26.4,92.4A15.9,15.9,0,0,1,179.9,176H84.1a15.9,15.9,0,0,1-15.4-11.6L32.5,37.8A8,8,0,0,0,24.8,32H8"
                     fill="none"
                     stroke="#faf9f9"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     id="mainIconPathAttribute"
                   ></path>
                 </svg>
+                <div className="cart_quantity_count">{numItems}</div>
               </h1>
             </a>
           </div>
@@ -370,8 +368,13 @@ function ProductList() {
                     <button
                       className="product-button"
                       onClick={() => handleAddToCart(plant)}
+                      disabled={cartItems.find(
+                        (item) => item.name === plant.name
+                      )}
                     >
-                      Add to Cart
+                      {cartItems.find((item) => item.name === plant.name)
+                        ? "Added to Cart"
+                        : "Add to Cart"}
                     </button>
                   </div>
                 ))}
