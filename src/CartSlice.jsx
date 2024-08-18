@@ -17,12 +17,19 @@ export const CartSlice = createSlice({
       }
       state.numOfItems++; // Increment numOfItems
     },
+
     removeItem: (state, action) => {
+      const itemToRemove = state.items.find(
+        (item) => item.name === action.payload.name
+      );
+      if (itemToRemove) {
+        state.numOfItems -= itemToRemove.quantity;
+      }
       state.items = state.items.filter(
         (item) => item.name !== action.payload.name
       );
-      state.numOfItems--; // Decrement numOfItems
     },
+
     incQuantity: (state, action) => {
       const { name, quantity } = action.payload;
       const itemToUpdate = state.items.find((item) => item.name === name);
